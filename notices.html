@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Notices - Gyan Ganga News</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<header class="navbar">
+
+<div class="logo">GGN</div>
+
+<div class="menu-toggle" id="menu-toggle">
+☰
+</div>
+
+<nav class="nav-links" id="nav-links">
+
+<a href="index.html">Home</a>
+<a href="notices.html">Notices</a>
+<a href="#">Events</a>
+<a href="hackathon.html">Hackathons</a>
+<a href="#">Sports</a>
+<a href="#">Holidays</a>
+<a href="#">Gallery</a>
+
+</nav>
+
+</header>
+
+
+<section class="hero">
+
+<h1>Notices</h1>
+<p>Latest Notices and Announcements</p>
+
+</section>
+
+
+<section class="news-container">
+
+<div class="news-card">
+
+<img src="https://pub-1407f82391df4ab1951418d04be76914.r2.dev/uploads/a63e5ce5-7113-4cac-a5c2-46052df5b79f.jpeg" alt="Notice Image" id="notice-image" style="width:100%; border-radius:8px; margin-bottom:10px; cursor:pointer;">
+
+<p>To all B.Tech StudentsThis is to inform you that the classes for the upcoming semester will commence as per the schedule below:2nd Semester: 23rd March 20264th Semester: 23rd March 2026You are required to complete your registration and pay the semester fees within 10 days from the commencement of classes. In case of delay, late registration fees will be applicable.Ensure timely payment to avoid any inconvenience.Regards,
+Administration</p>
+
+<p>thank you!.</p>
+
+</div>
+
+</section>
+
+
+<!-- Modal for enlarged image -->
+<div id="image-modal" class="modal">
+<span class="close">&times;</span>
+<img class="modal-content" id="modal-img">
+</div>
+
+
+<footer>
+
+<p>© 2026 Gyan Ganga News</p>
+
+</footer>
+
+
+<script>
+const menuToggle = document.getElementById("menu-toggle");
+const navLinks = document.getElementById("nav-links");
+
+menuToggle.addEventListener("click", () => {
+    navLinks.classList.toggle("active");
+
+    // ☰ / ✖ icon toggle with proper unicode
+    if(navLinks.classList.contains("active")){
+        menuToggle.innerHTML = "&#10005;"; // ✖
+    } else {
+        menuToggle.innerHTML = "&#9776;"; // ☰
+    }
+});
+
+// Modal functionality
+const modal = document.getElementById("image-modal");
+const img = document.getElementById("notice-image");
+const modalImg = document.getElementById("modal-img");
+const closeBtn = document.getElementsByClassName("close")[0];
+
+img.onclick = function(){
+    modal.style.display = "block";
+    modalImg.src = this.src;
+}
+
+closeBtn.onclick = function() {
+    modal.style.display = "none";
+}
+
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+</script>
+
+
+</body>
+</html></content>
+<parameter name="filePath">c:\Users\cyber\OneDrive\ggn_news\notices.html
