@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BTech Exam Dodger</title>
+<style>
+:root { --navH: 56px; }
+html, body { height: 100vh; width: 100vw; margin: 0; background: #ffffff; color: #000000; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; overflow: hidden; }
+#navbar { position: fixed; top: 0; left: 0; right: 0; height: var(--navH); display: flex; align-items: center; justify-content: space-between; padding: 0 16px; background: #dc2626; border-bottom: 1px solid #b91c1c; z-index: 10; }
+#navLeft { font-weight: 700; letter-spacing: .2px; color: #ffffff; }
+#navRight { font-weight: 600; opacity: .95; color: #ffffff; }
+#game { position: relative; top: var(--navH); height: calc(100svh - var(--navH)); width: 100vw; }
+canvas { width: 100%; height: 100%; background: #ffffff; border: 1px solid #dc2626; box-shadow: 0 10px 30px rgba(0,0,0,.45); touch-action: none; display: block; }
+#hud { position: absolute; top: 16px; left: 16px; background: rgba(255,255,255,.8); padding: 10px 12px; border-radius: 8px; font-weight: 600; color: #000000; }
+#toast { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); background: rgba(255,255,255,.9); padding: 16px 20px; border: 1px solid #dc2626; border-radius: 10px; display: none; color: #000000; }
+#toast.show { display: block; }
+#popup { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(255,255,255,.8); }
+#popup .card { background: #ffffff; border: 1px solid #dc2626; padding: 24px; border-radius: 12px; text-align: center; width: min(90vw, 420px); color: #000000; }
+#popup .title { font-size: 22px; margin-bottom: 12px; }
+.button { margin-top: 12px; background: #dc2626; color: #ffffff; border: none; padding: 10px 14px; font-weight: 700; border-radius: 8px; cursor: pointer; }
+.button:hover { background: #b91c1c; }
+.subtitle { margin-top: 8px; font-size: 16px; opacity: .92; }
+</style>
+</head>
+<body>
+<div id="navbar">
+  <div id="navLeft">GyanGanga BTech Exam Dodger</div>
+  <div id="navRight">Year 1 | Semester 1</div>
+</div>
+<div id="game">
+  <canvas id="gameCanvas" width="900" height="600"></canvas>
+  <div id="hud"></div>
+  <div id="toast"></div>
+  <div id="popup">
+    <div class="card">
+      <div class="title">Lag Gayi Back😂</div>
+      <button id="retry" class="button">Ek Bar Aur💀</button>
+    </div>
+  </div>
+  <audio id="gameOverSound" src="freesound_community-evil-laugh-89423.mp3" preload="auto"></audio>
+  <audio id="semesterCompleteSound" src="audio_c07a9f33fd.mp3" preload="auto"></audio>
+  <audio id="finalCompleteSound" src="audio_c3a05f1e13.mp3" preload="auto"></audio>
+</div>
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const hud = document.getElementById('hud');
+const popup = document.getElementById('popup');
+const card = popup.querySelector('.card');
+const retry = document.getElementById('retry');
+const toast = document.getElementById('toast');
+const player = { w: 72, h: 24, x: canvas.width/2 - 36, y: canvas.height - 40, speed: 360, vx: 0 };
+const playerImg = new Image();
+let assetsReady = false;
+const navRight = document.getElementById('navRight');
+const exams = [];
+let left = false, right = false;
+let semester = 1;
+let avoided = 0;
+let running = true;
+let last = 0;
+let spawnElapsed = 0;
+let spawnInterval = 700;
+let examSpeed = 140;
+let finalShown = false;
+function resize() {
+  const gameRect = document.getElementById('game').getBoundingClientRect();
+  canvas.style.width = gameRect.width + 'px';
+  canvas.style.height = gameRect.height + 'px';
+}
+window.addEventListener('resize', resize);
+resize();
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft') left = true;
+  if (e.key === 'ArrowRight') right = true;
+});
+document.addEventListener('keyup', e => {
+  if (e.key === 'ArrowLeft') left = false;
+  if (e.key === 'ArrowRight') right = false;
+});
+let dragActive = false;
+let dragId = null;
+let dragStartX = 0;
+let dragStartPlayerX = 0;
+function getCanvasScaleX() {
+  const rect = canvas.getBoundingClientRect();
+  return canvas.width / rect.width;
+}
+canvas.addEventListener('touchstart', e => {
+  e.preventDefault();
+  const t = e.changedTouches[0];
+  const rect = canvas.getBoundingClientRect();
+  dragActive = true;
+  dragId = t.identifier;
+  dragStartX = t.clientX - rect.left;
+  dragStartPlayerX = player.x;
+}, { passive: false });
+canvas.addEventListener('touchmove', e => {
+  if (!dragActive) return;
+  e.preventDefault();
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = getCanvasScaleX();
+  let touch = null;
+  for (let i = 0; i < e.touches.length; i++) {
+    if (e.touches[i].identifier === dragId) { touch = e.touches[i]; break; }
+  }
+  if (!touch) return;
+  const x = touch.clientX - rect.left;
+  const dx = (x - dragStartX) * scaleX;
+  player.x = dragStartPlayerX + dx;
+  if (player.x < 0) player.x = 0;
+  if (player.x + player.w > canvas.width) player.x = canvas.width - player.w;
+}, { passive: false });
+function endDrag(e) {
+  for (let i = 0; i < e.changedTouches.length; i++) {
+    if (e.changedTouches[i].identifier === dragId) {
+      dragActive = false;
+      dragId = null;
+      break;
+    }
+  }
+}
+canvas.addEventListener('touchend', endDrag, { passive: false });
+canvas.addEventListener('touchcancel', endDrag, { passive: false });
+retry.addEventListener('click', () => {
+  popup.style.display = 'none';
+  resetGame();
+});
+function showToast(text, ms) {
+  toast.textContent = text;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), ms || 1200);
+}
+function setDifficulty() {
+  examSpeed = 140 + (semester - 1) * 40;
+  spawnInterval = Math.max(250, 700 - (semester - 1) * 60);
+}
+function currentYear() {
+  return Math.ceil(Math.min(semester,8) / 2);
+}
+function updateNav() {
+  navRight.textContent = 'Year ' + currentYear() + ' | Semester ' + Math.min(semester,8);
+}
+function startSemester() {
+  avoided = 0;
+  exams.length = 0;
+  setDifficulty();
+  showToast('Semester ' + semester, 1200);
+  updateNav();
+}
+function resetGame() {
+  semester = 1;
+  finalShown = false;
+  card.innerHTML = '<div class="title">Lag Gayi Back</div><button id="retry" class="button">Ek Bar Aur</button>';
+  popup.querySelector('#retry').addEventListener('click', () => {
+    popup.style.display = 'none';
+    resetGame();
+  });
+  running = true;
+  startSemester();
+  player.x = canvas.width/2 - player.w/2;
+  player.y = canvas.height - player.h - 16;
+  left = right = false;
+}
+function spawnExam() {
+  const w = Math.round(80 + Math.random() * 20);
+  const h = Math.round(40 + Math.random() * 10);
+  const x = Math.random() * (canvas.width - w);
+  exams.push({ x, y: -h, w, h, vy: examSpeed });
+}
+function update(dt) {
+  if (!running) return;
+  player.vx = 0;
+  if (left) player.vx -= player.speed;
+  if (right) player.vx += player.speed;
+  player.x += player.vx * dt;
+  if (player.x < 0) player.x = 0;
+  if (player.x + player.w > canvas.width) player.x = canvas.width - player.w;
+  spawnElapsed += dt * 1000;
+  if (spawnElapsed >= spawnInterval) {
+    spawnElapsed = 0;
+    spawnExam();
+  }
+  for (let i = exams.length - 1; i >= 0; i--) {
+    const e = exams[i];
+    e.y += e.vy * dt;
+    if (rectsOverlap(player.x, player.y, player.w, player.h, e.x, e.y, e.w, e.h)) {
+      running = false;
+      popup.style.display = 'flex';
+      document.getElementById('gameOverSound').play();
+      return;
+    }
+    if (e.y > canvas.height) {
+      exams.splice(i,1);
+      avoided += 1;
+      if (avoided >= 6) {
+        semester += 1;
+        if (semester <= 8) {
+          startSemester();
+          const m = {2:'Congratulations you passed 1st year successfully',4:'Congratulations you passed 2nd year successfully',6:'Congratulations you passed 3rd year successfully'}[semester-1];
+          if (m) {
+            showToast(m, 1800);
+            document.getElementById('semesterCompleteSound').play();
+          }
+        } else {
+          running = false;
+          finalShown = true;
+          card.innerHTML = '<div class="title">Congratulations you have successfully completed your BTech</div><div class="subtitle">ab jao auto chalao</div>';
+          popup.style.display = 'flex';
+          document.getElementById('finalCompleteSound').play();
+        }
+      }
+    }
+  }
+}
+function rectsOverlap(ax, ay, aw, ah, bx, by, bw, bh) {
+  return ax < bx + bw && ax + aw > bx && ay < by + bh && ay + ah > by;
+}
+function draw() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  if (assetsReady) {
+    ctx.drawImage(playerImg, Math.round(player.x), Math.round(player.y), Math.round(player.w), Math.round(player.h));
+  } else {
+    ctx.fillStyle = '#dc2626';
+    ctx.fillRect(player.x, player.y, player.w, player.h);
+  }
+  for (const e of exams) {
+    ctx.fillStyle = '#dc2626';
+    ctx.fillRect(e.x, e.y, e.w, e.h);
+    ctx.strokeStyle = '#b91c1c';
+    ctx.strokeRect(e.x, e.y, e.w, e.h);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 18px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('EXAM', e.x + e.w/2, e.y + e.h/2);
+  }
+  hud.textContent = 'Avoided ' + avoided + '/6';
+}
+function loop(ts) {
+  if (!last) last = ts;
+  const dt = Math.min(0.033, (ts - last) / 1000);
+  last = ts;
+  update(dt);
+  draw();
+  requestAnimationFrame(loop);
+}
+playerImg.onload = () => {
+  const ratio = playerImg.naturalWidth ? playerImg.naturalHeight / playerImg.naturalWidth : 1;
+  player.w = Math.max(60, Math.min(80, player.w));
+  player.h = Math.round(player.w * ratio);
+  player.x = canvas.width/2 - player.w/2;
+  player.y = canvas.height - player.h - 16;
+  assetsReady = true;
+  startSemester();
+  requestAnimationFrame(loop);
+};
+playerImg.src = 'player.png';
+playerImg.onerror = () => {
+  assetsReady = false;
+  startSemester();
+  requestAnimationFrame(loop);
+};
+</script>
+</body>
+</html>
