@@ -3,29 +3,188 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bussiness - Gyan Ganga News</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Flipping Profile</title>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #111;
+      color: #fff;
+      font-family: Arial, sans-serif;
+    }
+
+    .navbar {
+      width: 100%;
+      padding: 15px 20px;
+      background: #000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+    }
+
+    .logo { font-size: 20px; font-weight: bold; }
+
+    .nav-links a {
+      color: #fff;
+      margin-left: 15px;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .card {
+      width: 90%;
+      max-width: 320px;
+      height: 320px;
+      perspective: 1000px;
+    }
+
+    .inner {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.8s ease-in-out;
+      border-radius: 20px;
+    }
+
+    .flip { transform: rotateY(180deg); }
+
+    .front, .back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .front img, .back img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .back { transform: rotateY(180deg); }
+
+    .flip-btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 25px;
+      background: #00ffcc;
+      color: #000;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .title-link {
+      display: inline-block;
+      margin-top: 20px;
+      font-size: 24px;
+      font-weight: bold;
+      color: #00ffcc;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    .title-link:hover {
+      color: #00ccaa;
+      transform: scale(1.05);
+    }
+
+    p {
+      margin-top: 10px;
+      max-width: 500px;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+  </style>
 </head>
 <body>
 
-<header class="navbar">
-  <div class="logo">GGN</div>
-  <nav class="nav-links">
-    <a href="index.html">Home</a>
-    <a href="notices.html">Notices</a>
-    <a href="hackathon.html">Hackathons</a>
-  </nav>
-</header>
+  <div class="navbar">
+    <div class="logo">MyPage</div>
+    <div class="nav-links">
+      <a href="#">Home</a>
+      <a href="#">About</a>
+      <a href="#">Contact</a>
+    </div>
+  </div>
 
-<main style="padding:20px;max-width:900px;margin:0 auto;">
-  <h1>Bussiness Page</h1>
-  <p>Welcome to the bussiness page. Add your business content here.</p>
-  <a href="index.html"><button style="padding:8px 12px;border-radius:6px;">Back to Home</button></a>
-</main>
+  <div class="container">
 
-<footer>
-  <p>© 2026 Gyan Ganga News</p>
-</footer>
+    <div class="card">
+      <div class="inner" id="cardInner">
+
+        <div class="front">
+          <img src="https://image2url.com/r2/default/images/1773762949379-4ab0475f-b2eb-4f98-b704-7a43a581fcdb.jpg" alt="Owner">
+        </div>
+
+        <div class="back">
+          <img src="https://image2url.com/r2/default/images/1773768941490-3470be09-39eb-4df3-bddd-7167511e94b5.jpg" alt="Business">
+        </div>
+
+      </div>
+    </div>
+
+    <button class="flip-btn" id="flipBtn">view_owner</button>
+
+    <a 
+      class="title-link" 
+      id="title" 
+      href="https://www.instagram.com/shivorastore.us" 
+      target="_blank">
+      @shivorastore.us
+    </a>
+
+    <p id="desc">
+      Shivora is a lifestyle store offering anime figures, clothing, accessories, and home decor for fans and trendsetters. Shop keychains, posters, tees, watches, belts, and more for men and women. Stylish and affordable!
+    </p>
+
+  </div>
+
+  <script>
+    const card = document.getElementById('cardInner');
+    const btn = document.getElementById('flipBtn');
+    const title = document.getElementById('title');
+    const desc = document.getElementById('desc');
+
+    let isFlipped = false;
+
+    btn.addEventListener('click', () => {
+      card.classList.toggle('flip');
+      isFlipped = !isFlipped;
+
+      if (isFlipped) {
+        btn.textContent = 'view_bussiness';
+        title.textContent = '@the_dkr08';
+        title.href = 'https://www.instagram.com/the_dkr08';
+
+        // 🔥 Owner Text
+        desc.textContent = 'Hey, I am the owner of Shivora. Follow me for updates, behind-the-scenes content, and new drops!';
+
+      } else {
+        btn.textContent = 'view_owner';
+        title.textContent = '@shivorastore.us';
+        title.href = 'https://www.instagram.com/shivorastore.us';
+
+        // 🔥 Business Text
+        desc.textContent = 'Shivora is a lifestyle store offering anime figures, clothing, accessories, and home decor for fans and trendsetters. Shop keychains, posters, tees, watches, belts, and more for men and women. Stylish and affordable!';
+      }
+    });
+  </script>
 
 </body>
 </html>
