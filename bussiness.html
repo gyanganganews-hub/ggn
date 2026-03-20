@@ -155,6 +155,40 @@
 
   </div>
 
+  <div class="container">
+
+    <div class="card">
+      <div class="inner" id="cardInner2">
+
+        <div class="front">
+          <img src="https://pub-1407f82391df4ab1951418d04be76914.r2.dev/uploads/aae92c2d-1748-4af9-8982-5158c58e1b99.jpg" alt="Owner">
+        </div>
+
+        <div class="back">
+          <img src="https://pub-1407f82391df4ab1951418d04be76914.r2.dev/uploads/2bd13baf-643a-4142-8f28-99ebb9e833ba.jpg" alt="Business">
+        </div>
+
+      </div>
+    </div>
+
+    <button class="flip-btn" id="flipBtn2">view_owner</button>
+
+    <a 
+      class="title-link" 
+      id="title2" 
+      href="https://www.instagram.com/printit_india?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" 
+      target="_blank">
+      @printit__india
+    </a>
+
+    <p id="desc2">
+      A printing press is a business that provides a wide range of printing services for both personal and commercial purposes. It plays an important role in producing high-quality printed materials such as wedding cards, visiting cards, invitation cards, banners, posters, and customized T-shirt prints.
+
+A modern printing press uses advanced technology and high-quality materials to ensure clear, durable, and visually appealing results. It offers customization options in terms of design, color, size, and finishing, allowing customers to create products according to their specific needs and preferences.
+    </p>
+
+  </div>
+
   <script>
     const card = document.getElementById('cardInner');
     const btn = document.getElementById('flipBtn');
@@ -184,7 +218,36 @@
         desc.textContent = 'Shivora is a lifestyle store offering anime figures, clothing, accessories, and home decor for fans and trendsetters. Shop keychains, posters, tees, watches, belts, and more for men and women. Stylish and affordable!';
       }
     });
+
+    const card2 = document.getElementById('cardInner2');
+    const btn2 = document.getElementById('flipBtn2');
+    const title2 = document.getElementById('title2');
+    const desc2 = document.getElementById('desc2');
+
+    let isFlipped2 = false;
+
+    btn2.addEventListener('click', () => {
+      card2.classList.toggle('flip');
+      isFlipped2 = !isFlipped2;
+
+      if (isFlipped2) {
+        btn2.textContent = 'view_bussiness';
+        title2.textContent = '@kamal__goutam';
+        title2.href = 'https://www.instagram.com/kamal__goutam?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==';
+
+        // 🔥 Owner Text
+        desc2.textContent = 'ownerDesc: "The owner of printit_india, kamal goutam, is a B.Tech student at Gyan Ganga College who is managing his business alongside his studies. Follow him to stay updated on his journey."';
+
+      } else {
+        btn2.textContent = 'view_owner';
+        title2.textContent = '@printit__india';
+        title2.href = 'https://www.instagram.com/printit_india?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==';
+
+        // 🔥 Business Text
+        desc2.textContent = 'A printing press is a business that provides a wide range of printing services for both personal and commercial purposes. It plays an important role in producing high-quality printed materials such as wedding cards, visiting cards, invitation cards, banners, posters, and customized T-shirt prints. A modern printing press uses advanced technology and high-quality materials to ensure clear, durable, and visually appealing results. It offers customization options in terms of design, color, size, and finishing, allowing customers to create products according to their specific needs and preferences.';
+      }
+    });
   </script>
 
 </body>
-</html>
+</html> 
